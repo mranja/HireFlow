@@ -100,32 +100,45 @@ Joined
 
 ## Technology Stack
 
-### Frontend
+### Programming Language
 
-- React
-- React Router
-- Context API
-- Axios
-- Tailwind CSS
-- Recharts
+- Python
 
-### Backend
+### Frontend & Dashboard
 
-- Node.js
-- Express.js
-- JWT
-- Multer
+- Streamlit
+
+### Data Processing & Analytics
+
+- Pandas
+- NumPy
 
 ### Database
 
-- MongoDB Atlas
-- Mongoose
+- SQLite
+- SQL
 
-### Deployment
+### Data Visualization
 
-- Frontend: Vercel
-- Backend: Render
-- Database: MongoDB Atlas
+- Plotly
+
+### Version Control & Collaboration
+
+- Git
+- GitHub
+
+### CI/CD & Automation
+
+- GitHub Actions
+
+## Development Environment
+
+- Visual Studio Code
+- Python Virtual Environment (venv)
+
+## Future Deployment
+
+- Streamlit Community Cloud (or Render)
 
 ---
 

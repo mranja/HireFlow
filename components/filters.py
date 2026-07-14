@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from utils.constants import (
+from HireFlow.backend.utils.constants import (
     ALL_FILTER_OPTION,
     DEPARTMENTS,
     POSITIONS,

@@ -5,7 +5,6 @@ import pytest
 
 from HireFlow.backend.database import database as db
 
-
 @pytest.fixture(autouse=True)
 def temp_db(tmp_path, monkeypatch):
     """Point SQLITE_DB_PATH at a throwaway file for each test."""
@@ -72,8 +71,8 @@ def test_update_raises_with_empty_dict():
 
 def test_init_db_is_idempotent():
     db.init_db()
-    db.init_db()  # should not raise on a second call
-    assert _fetch() is not None  # existing data untouched
+    db.init_db()
+    assert _fetch() is not None
 
 
 def test_update_email_to_existing_email_raises():
@@ -87,8 +86,46 @@ def test_update_email_to_existing_email_raises():
              "Sales", "SDR", "Applied", "2026-07-02", "Active"),
         )
 
-    # Current behavior: raises the raw sqlite3 IntegrityError, not a
-    # friendly custom exception. Flagging via this test until/unless
-    # update_candidate is changed to catch and re-raise it explicitly.
     with pytest.raises(sqlite3.IntegrityError):
         db.update_candidate("HF-CAND-002", {"Email": "test@example.com"})
+
+
+def test_update_drop_off_reason():
+    db.update_candidate("HF-CAND-001", {"Drop-off Reason": "Ghosted"})
+    assert _fetch()["drop_off_reason"] == "Ghosted"
+
+
+def test_new_candidate_has_empty_drop_off_reason_by_default():
+    assert _fetch()["drop_off_reason"] == ""
+
+
+def test_update_candidate_stage_valid():
+    db.update_candidate_stage("HF-CAND-001", "Technical")
+    assert _fetch()["current_stage"] == "Technical"
+
+
+def test_update_candidate_stage_rejects_invalid_stage():
+    with pytest.raises(ValueError):
+        db.update_candidate_stage("HF-CAND-001", "Not A Real Stage")
+
+
+def test_update_candidate_stage_raises_on_missing_candidate():
+    with pytest.raises(db.CandidateNotFoundError):
+        db.update_candidate_stage("HF-CAND-999", "Technical")
+
+
+def test_mark_candidate_dropped_sets_status_and_reason():
+    db.mark_candidate_dropped("HF-CAND-001", "Ghosted")
+    row = _fetch()
+    assert row["status"] == "Rejected"
+    assert row["drop_off_reason"] == "Ghosted"
+
+
+def test_mark_candidate_dropped_rejects_invalid_reason():
+    with pytest.raises(ValueError):
+        db.mark_candidate_dropped("HF-CAND-001", "Not A Real Reason")
+
+
+def test_mark_candidate_dropped_raises_on_missing_candidate():
+    with pytest.raises(db.CandidateNotFoundError):
+        db.mark_candidate_dropped("HF-CAND-999", "Ghosted")

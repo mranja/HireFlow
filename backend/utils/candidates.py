@@ -17,7 +17,13 @@ from HireFlow.backend.utils.constants import (
     ALL_FILTER_OPTION,
     CANDIDATE_COLUMNS,
     CANDIDATES_CSV_PATH,
+    DROP_OFF_REASONS,
+    STAGES,
 )
+
+
+class CandidateNotFoundError(Exception):
+    """Raised when a candidate_id does not exist in the CSV store."""
 
 
 def _ensure_candidates_file(csv_path: Path) -> None:
@@ -64,6 +70,7 @@ def load_candidates(csv_path: Path = CANDIDATES_CSV_PATH) -> pd.DataFrame:
             "Recruiter": "string",
             "Applied Date": "string",
             "Status": "string",
+            "Drop-off Reason": "string",
         },
     )
     return _normalise_dataframe(df)
@@ -97,6 +104,7 @@ def _prepare_candidate_record(
     )
     record["Experience"] = int(record.get("Experience") or 0)
     record["Status"] = record["Status"] or "Active"
+    record["Drop-off Reason"] = record.get("Drop-off Reason") or ""
     return record
 
 
@@ -159,3 +167,72 @@ def filter_candidates(
         filtered_df = filtered_df[filtered_df["Position"] == position]
 
     return filtered_df.copy()
+
+
+def _locate_candidate(
+    candidates: pd.DataFrame, candidate_id: str
+) -> pd.Series:
+    """Return the boolean mask for candidate_id, raising if not found."""
+    match = candidates["Candidate ID"] == candidate_id
+    if not match.any():
+        raise CandidateNotFoundError(f"No candidate with id={candidate_id!r}")
+    return match
+
+
+def update_candidate_stage(
+    candidate_id: str,
+    new_stage: str,
+    csv_path: Path = CANDIDATES_CSV_PATH,
+) -> pd.DataFrame:
+    """One-click transition of a candidate to a new pipeline stage.
+
+    Validates new_stage against STAGES before writing. Mirrors
+    database.update_candidate_stage() so behavior stays identical once
+    the SQLite backend takes over — this is the CSV layer's live version,
+    used directly by the Streamlit pages today.
+
+    Raises:
+        ValueError: if new_stage isn't a recognized STAGES value.
+        CandidateNotFoundError: if candidate_id doesn't exist.
+
+    Returns:
+        The refreshed candidates dataframe.
+    """
+    if new_stage not in STAGES:
+        raise ValueError(f"{new_stage!r} is not a valid pipeline stage.")
+
+    candidates = load_candidates(csv_path)
+    match = _locate_candidate(candidates, candidate_id)
+
+    candidates.loc[match, "Current Stage"] = new_stage
+    candidates.to_csv(csv_path, index=False)
+    return candidates
+
+
+def mark_candidate_dropped(
+    candidate_id: str,
+    drop_off_reason: str,
+    csv_path: Path = CANDIDATES_CSV_PATH,
+) -> pd.DataFrame:
+    """Mark a candidate as dropped out of the pipeline, with a reason.
+
+    Sets Status to 'Rejected' and records why. Mirrors
+    database.mark_candidate_dropped() for CSV/SQLite parity.
+
+    Raises:
+        ValueError: if drop_off_reason isn't a recognized DROP_OFF_REASONS value.
+        CandidateNotFoundError: if candidate_id doesn't exist.
+
+    Returns:
+        The refreshed candidates dataframe.
+    """
+    if drop_off_reason not in DROP_OFF_REASONS:
+        raise ValueError(f"{drop_off_reason!r} is not a valid drop-off reason.")
+
+    candidates = load_candidates(csv_path)
+    match = _locate_candidate(candidates, candidate_id)
+
+    candidates.loc[match, "Status"] = "Rejected"
+    candidates.loc[match, "Drop-off Reason"] = drop_off_reason
+    candidates.to_csv(csv_path, index=False)
+    return candidates

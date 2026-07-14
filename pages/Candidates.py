@@ -61,6 +61,13 @@ SKILL_LIBRARY = {
     "Data Analyst": ["SQL", "Python", "Dashboards", "Statistics"],
     "UI Designer": ["Figma", "Design Systems", "Prototyping", "Research"],
 }
+from components.tables import candidate_table
+from HireFlow.backend.utils.candidates import (
+    filter_candidates,
+    load_candidates,
+    save_candidate,
+    search_candidates,
+)
 
 
 def _apply_page_style() -> None:

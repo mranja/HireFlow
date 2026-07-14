@@ -39,6 +39,12 @@ STATUS_OPTIONS = [
     "On Hold",
     "Joined",
 ]
+from HireFlow.backend.utils.constants import (
+    ALL_FILTER_OPTION,
+    DEPARTMENTS,
+    POSITIONS,
+    STAGES,
+)
 
 POSITION_OPTIONS = [
     "Frontend Developer",

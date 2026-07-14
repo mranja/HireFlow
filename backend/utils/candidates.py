@@ -13,7 +13,7 @@ from typing import Any, Mapping
 
 import pandas as pd
 
-from utils.constants import (
+from HireFlow.backend.utils.constants import (
     ALL_FILTER_OPTION,
     CANDIDATE_COLUMNS,
     CANDIDATES_CSV_PATH,

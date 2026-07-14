@@ -13,7 +13,7 @@ from components.filters import (
 )
 from components.forms import candidate_form
 from components.tables import candidate_table
-from utils.candidates import (
+from HireFlow.backend.utils.candidates import (
     filter_candidates,
     load_candidates,
     save_candidate,

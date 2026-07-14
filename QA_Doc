@@ -1,0 +1,180 @@
+# HireFlow QA Test Execution Report
+
+## Project
+
+HireFlow – Recruitment Analytics Platform
+
+
+## Test Cycle
+
+Authentication & Role-Based Access Testing
+
+## Test Environment
+
+* Frontend: React
+* Backend: Node.js / Express
+* Database: MongoDB
+* Browser: Google Chrome Version 138
+* Operating System: Windows 11
+
+---
+
+# Scope
+
+The QA cycle focused on:
+
+* Authentication
+* Authorization
+* Role-Based Access Control (Admin, HR Manager, Recruiter)
+* Session Management
+* Protected Routes
+* Login & Logout
+* API Response Validation
+
+---
+
+# Test Execution Summary
+
+| Metric           | Result |
+| ---------------- | ------ |
+| Total Test Cases | 20     |
+| Passed           | 17     |
+| Failed           | 3      |
+| Pass Rate        | 85%    |
+| Critical Bugs    | 1      |
+| Medium Bugs      | 2      |
+
+---
+
+# Role Verification
+
+## Admin
+
+Verified Successfully
+
+* Login
+* Create Recruiter
+* Create HR Manager
+* View Dashboard
+* Manage Departments
+* View Analytics
+* Logout
+
+Status: **PASS**
+
+---
+
+## HR Manager
+
+Verified Successfully
+
+* Login
+* Create Candidate
+* Update Candidate
+* Schedule Interview
+* View Analytics
+
+Restriction Verified
+
+* Cannot create Admin users
+
+Status: **PASS**
+
+---
+
+## Recruiter
+
+Verified Successfully
+
+* Login
+* Add Candidate
+* Upload Resume
+* Update Candidate Status
+
+Restriction Verified
+
+* Cannot access Admin Dashboard
+* Cannot delete Departments
+
+Status: **PASS**
+
+---
+
+# Bugs Identified
+
+### BUG-001 (Critical)
+
+**Title**
+Unauthorized user can directly access Analytics API using URL.
+
+**Steps**
+
+1. Login as Recruiter.
+2. Open browser developer tools.
+3. Access `/api/analytics`.
+
+**Expected**
+
+Return **403 Forbidden**.
+
+**Actual**
+
+Analytics data is returned.
+
+**Status**
+
+Open
+
+Priority: Critical
+
+---
+
+### BUG-002 (Medium)
+
+**Title**
+
+Expired JWT redirects to blank page instead of Login page.
+
+**Expected**
+
+Redirect user to Login screen.
+
+**Actual**
+
+Blank page displayed.
+
+Status: Open
+
+---
+
+### BUG-003 (Medium)
+
+**Title**
+
+Validation message missing when password field is empty.
+
+Expected:
+
+"Password is required."
+
+Actual:
+
+No validation message displayed.
+
+Status: Open
+
+---
+
+# QA Observations
+
+* Authentication flow works correctly.
+* Role-based restrictions are implemented for most features.
+* Session timeout works correctly.
+* Password hashing and JWT authentication function as expected.
+* API authorization requires improvement for analytics endpoints.
+
+---
+
+# Recommendation
+
+The application is suitable for further integration testing after fixing the identified authorization and validation issues. The critical API authorization bug should be resolved before production deployment.

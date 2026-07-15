@@ -8,7 +8,7 @@ from typing import Any
 
 import pandas as pd
 
-from HireFlow.backend.utils.constants import SQLITE_DB_PATH
+from HireFlow.backend.utils.constants import DROP_OFF_REASONS, SQLITE_DB_PATH, STAGES
 
 # CANDIDATE_COLUMNS uses display-style headers ("Candidate ID", "Current Stage")
 # to match the CSV layer in utils/candidates.py. SQLite needs snake_case
@@ -26,6 +26,7 @@ _COLUMN_TO_SQL = {
     "Recruiter": "recruiter",
     "Applied Date": "applied_date",
     "Status": "status",
+    "Drop-off Reason": "drop_off_reason",
 }
 # Reverse mapping, used by get_all_candidates() once it's implemented (Day 10)
 # to convert SQL rows back into CANDIDATE_COLUMNS-keyed dicts for the DataFrame.
@@ -43,7 +44,8 @@ CREATE TABLE IF NOT EXISTS candidates (
     current_stage TEXT NOT NULL DEFAULT 'Applied',
     recruiter TEXT,
     applied_date TEXT,
-    status TEXT NOT NULL DEFAULT 'Active'
+    status TEXT NOT NULL DEFAULT 'Active',
+    drop_off_reason TEXT DEFAULT ''
 )
 """
 
@@ -94,9 +96,9 @@ def update_candidate(candidate_id: str, updates: dict[str, Any]) -> None:
     """Update an existing candidate in SQLite.
 
     `updates` is keyed by CANDIDATE_COLUMNS names (e.g. "Current Stage",
-    "Status"), matching the shape used by the CSV layer in
-    utils/candidates.py so Streamlit pages don't change when this backend
-    goes live. Unknown keys are ignored rather than raising.
+    "Status", "Drop-off Reason"), matching the shape used by the CSV layer
+    in utils/candidates.py so Streamlit pages don't change when this
+    backend goes live. Unknown keys are ignored rather than raising.
 
     Raises:
         ValueError: if no recognized fields were provided.
@@ -133,3 +135,37 @@ def delete_candidate(candidate_id: str) -> None:
         if not _row_exists(conn, candidate_id):
             raise CandidateNotFoundError(f"No candidate with id={candidate_id!r}")
         conn.execute("DELETE FROM candidates WHERE candidate_id = ?", (candidate_id,))
+
+
+def update_candidate_stage(candidate_id: str, new_stage: str) -> None:
+    """One-click transition of a candidate to a new pipeline stage.
+
+    Thin wrapper over update_candidate() that validates new_stage against
+    STAGES before writing, so a typo'd stage name can't silently corrupt
+    the funnel.
+
+    Raises:
+        ValueError: if new_stage isn't a recognized STAGES value.
+        CandidateNotFoundError: if candidate_id doesn't exist.
+    """
+    if new_stage not in STAGES:
+        raise ValueError(f"{new_stage!r} is not a valid pipeline stage.")
+    update_candidate(candidate_id, {"Current Stage": new_stage})
+
+
+def mark_candidate_dropped(candidate_id: str, drop_off_reason: str) -> None:
+    """Mark a candidate as dropped out of the pipeline, with a reason.
+
+    Sets Status to 'Rejected' and records why, so later drop-off analysis
+    can distinguish "we said no" from "they said no" rather than lumping
+    every exit into one undifferentiated count.
+
+    Raises:
+        ValueError: if drop_off_reason isn't a recognized DROP_OFF_REASONS value.
+        CandidateNotFoundError: if candidate_id doesn't exist.
+    """
+    if drop_off_reason not in DROP_OFF_REASONS:
+        raise ValueError(f"{drop_off_reason!r} is not a valid drop-off reason.")
+    update_candidate(
+        candidate_id, {"Status": "Rejected", "Drop-off Reason": drop_off_reason}
+    )

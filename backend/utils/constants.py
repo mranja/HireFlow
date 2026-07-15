@@ -21,6 +21,7 @@ CANDIDATE_COLUMNS = [
     "Recruiter",
     "Applied Date",
     "Status",
+    "Drop-off Reason",
 ]
 
 DEPARTMENTS = [
@@ -63,6 +64,15 @@ STATUSES = [
     "On Hold",
     "Rejected",
     "Hired",
+]
+
+# Only meaningful once a candidate has left the pipeline (Status = Rejected,
+# or Current Stage abandoned mid-funnel). Empty string means still active.
+DROP_OFF_REASONS = [
+    "Rejected",
+    "Withdrawn",
+    "Ghosted",
+    "RoleCancelled",
 ]
 
 ALL_FILTER_OPTION = "All"

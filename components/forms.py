@@ -8,7 +8,11 @@ from typing import Any
 
 import streamlit as st
 
+<<<<<<< HEAD
+from utils.constants import DEPARTMENTS, POSITIONS, RECRUITERS, STAGES
+=======
 from HireFlow.backend.utils.constants import DEPARTMENTS, POSITIONS, RECRUITERS, STAGES
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
 
 EMAIL_PATTERN = re.compile(r"^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$")
 

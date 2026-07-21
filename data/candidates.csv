@@ -11,6 +11,8 @@ HF-CAND-009,Raj Malhotra,raj.malhotra@example.com,+91 98765 43218,Marketing,QA E
 HF-CAND-010,Meera Joshi,meera.joshi@example.com,+91 98765 43219,Finance,Backend Developer,8,Joined,Priya Nair,2026-06-16,Hired
 HF-CAND-011,Aditya Nair,aditya.nair@example.com,+91 98765 43220,Sales,Frontend Developer,3,Screening,Aisha Sharma,2026-06-18,Active
 HF-CAND-012,Diya Verma,diya.verma@example.com,+91 98765 43221,HR,Data Analyst,2,Assessment,Daniel Lewis,2026-06-20,On Hold
+<<<<<<< HEAD
+=======
 HF-CAND-013,Arjun Pillai,arjun.pillai@example.com,+91 98765 43222,Engineering,DevOps Engineer,5,Technical,Maya Patel,2026-06-21,Active
 HF-CAND-014,Kavya Reddy,kavya.reddy@example.com,+91 98765 43223,Marketing,Content Strategist,4,HR,Noah Bennett,2026-06-22,Active
 HF-CAND-015,Nikhil Sharma,nikhil.sharma@example.com,+91 98765 43224,Engineering,Backend Developer,6,Offer,Aisha Sharma,2026-06-22,Active
@@ -49,3 +51,4 @@ HF-CAND-047,Ritesh Sinha,ritesh.sinha@example.com,+91 98765 43256,Sales,Business
 HF-CAND-048,Keerthi Mohan,keerthi.mohan@example.com,+91 98765 43257,Engineering,Mobile Developer,2,Applied,Maya Patel,2026-07-09,Active
 HF-CAND-049,Ajay Narayan,ajay.narayan@example.com,+91 98765 43258,Engineering,QA Automation Engineer,7,Accepted,Noah Bennett,2026-07-09,Hired
 HF-CAND-050,Swetha Ram,swetha.ram@example.com,+91 98765 43259,Marketing,UX Researcher,4,Technical,Priya Nair,2026-07-10,Active
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2

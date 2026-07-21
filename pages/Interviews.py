@@ -971,10 +971,13 @@ def render_page(
     summary_metrics: Mapping[str, Any] | None = None,
 ) -> None:
     """Render the complete Interview Feedback frontend module."""
+<<<<<<< HEAD
+=======
     st.set_page_config(
         page_title="Interviews | HireFlow Analytics",
         layout="wide",
     )
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
     _apply_page_style()
     _render_header()
 
@@ -1011,4 +1014,13 @@ def render_page(
         _render_timeline(selected_interview)
 
 
+<<<<<<< HEAD
+if __name__ == "__main__":
+    st.set_page_config(
+        page_title="Interviews | HireFlow Analytics",
+        layout="wide",
+    )
+    render_page()
+=======
 render_page()
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2

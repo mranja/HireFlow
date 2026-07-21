@@ -194,8 +194,12 @@ def _render_header() -> None:
         (
             '<div class="hf-page-subtitle">'
             'Review department performance, operational health, and hiring readiness. '
+<<<<<<< HEAD
             'All data will populate automatically after backend integration.'
             '</div>'
+=======
+            'All data will populate automatically after backend integration.'</div>'
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
         ),
         unsafe_allow_html=True,
     )
@@ -259,12 +263,18 @@ def _render_department_table() -> None:
     department_df = _empty_department_dataframe()
     if department_df.empty:
         st.markdown(
+<<<<<<< HEAD
             (
                 '<div class="hf-table-placeholder">'
                 '<strong>No departments available.</strong> '
                 'Department records will appear here after backend integration.'
                 '</div>'
             ),
+=======
+            '<div class="hf-table-placeholder">'
+            '<strong>No departments available.</strong> '
+            'Department records will appear here after backend integration.'</div>',
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
             unsafe_allow_html=True,
         )
         st.dataframe(department_df, hide_index=True, use_container_width=True)
@@ -409,8 +419,11 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     st.set_page_config(
         page_title="Departments | HireFlow Analytics",
         layout="wide",
     )
+=======
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
     main()

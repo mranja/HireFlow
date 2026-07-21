@@ -11,3 +11,44 @@ HF-CAND-009,Raj Malhotra,raj.malhotra@example.com,+91 98765 43218,Marketing,QA E
 HF-CAND-010,Meera Joshi,meera.joshi@example.com,+91 98765 43219,Finance,Backend Developer,8,Joined,Priya Nair,2026-06-16,Hired
 HF-CAND-011,Aditya Nair,aditya.nair@example.com,+91 98765 43220,Sales,Frontend Developer,3,Screening,Aisha Sharma,2026-06-18,Active
 HF-CAND-012,Diya Verma,diya.verma@example.com,+91 98765 43221,HR,Data Analyst,2,Assessment,Daniel Lewis,2026-06-20,On Hold
+<<<<<<< HEAD
+=======
+HF-CAND-013,Arjun Pillai,arjun.pillai@example.com,+91 98765 43222,Engineering,DevOps Engineer,5,Technical,Maya Patel,2026-06-21,Active
+HF-CAND-014,Kavya Reddy,kavya.reddy@example.com,+91 98765 43223,Marketing,Content Strategist,4,HR,Noah Bennett,2026-06-22,Active
+HF-CAND-015,Nikhil Sharma,nikhil.sharma@example.com,+91 98765 43224,Engineering,Backend Developer,6,Offer,Aisha Sharma,2026-06-22,Active
+HF-CAND-016,Priyanka Nair,priyanka.nair@example.com,+91 98765 43225,Finance,Financial Analyst,3,Assessment,Daniel Lewis,2026-06-23,Active
+HF-CAND-017,Rahul Verma,rahul.verma@example.com,+91 98765 43226,Sales,Business Development Executive,5,Technical,Priya Nair,2026-06-23,Active
+HF-CAND-018,Shruti Menon,shruti.menon@example.com,+91 98765 43227,Engineering,QA Engineer,2,Screening,Maya Patel,2026-06-24,Active
+HF-CAND-019,Harish Kumar,harish.kumar@example.com,+91 98765 43228,Engineering,Full Stack Developer,7,Offer,Aisha Sharma,2026-06-24,Active
+HF-CAND-020,Aishwarya Iyer,aishwarya.iyer@example.com,+91 98765 43229,HR,HR Executive,3,Applied,Daniel Lewis,2026-06-25,Active
+HF-CAND-021,Manoj Babu,manoj.babu@example.com,+91 98765 43230,Engineering,Frontend Developer,4,Assessment,Maya Patel,2026-06-25,Active
+HF-CAND-022,Pooja Khanna,pooja.khanna@example.com,+91 98765 43231,Marketing,Graphic Designer,5,Accepted,Noah Bennett,2026-06-26,Hired
+HF-CAND-023,Akash Jain,akash.jain@example.com,+91 98765 43232,Engineering,Backend Developer,2,Applied,Aisha Sharma,2026-06-26,Active
+HF-CAND-024,Nisha Thomas,nisha.thomas@example.com,+91 98765 43233,Finance,Accounts Executive,4,Technical,Priya Nair,2026-06-27,Active
+HF-CAND-025,Sanjay Ramesh,sanjay.ramesh@example.com,+91 98765 43234,Sales,Sales Executive,6,HR,Daniel Lewis,2026-06-27,Active
+HF-CAND-026,Keerthana S,keerthana.s@example.com,+91 98765 43235,Engineering,Data Engineer,5,Offer,Maya Patel,2026-06-28,Active
+HF-CAND-027,Yash Gupta,yash.gupta@example.com,+91 98765 43236,Engineering,Mobile Developer,3,Technical,Aisha Sharma,2026-06-28,Active
+HF-CAND-028,Ritika Bose,ritika.bose@example.com,+91 98765 43237,Marketing,Digital Marketing Specialist,4,Screening,Noah Bennett,2026-06-29,Rejected
+HF-CAND-029,Mohit Agarwal,mohit.agarwal@example.com,+91 98765 43238,Engineering,Cloud Engineer,8,Joined,Daniel Lewis,2026-06-29,Hired
+HF-CAND-030,Lakshmi Narayanan,lakshmi.narayanan@example.com,+91 98765 43239,HR,Talent Acquisition Specialist,5,Assessment,Priya Nair,2026-06-30,On Hold
+HF-CAND-031,Varun Chandra,varun.chandra@example.com,+91 98765 43240,Engineering,QA Automation Engineer,6,Technical,Maya Patel,2026-06-30,Active
+HF-CAND-032,Sonal Gupta,sonal.gupta@example.com,+91 98765 43241,Finance,Business Analyst,4,Accepted,Aisha Sharma,2026-07-01,Hired
+HF-CAND-033,Anirudh Krishnan,anirudh.krishnan@example.com,+91 98765 43242,Engineering,Backend Developer,5,Technical,Daniel Lewis,2026-07-01,Active
+HF-CAND-034,Pavithra Srinivasan,pavithra.srinivasan@example.com,+91 98765 43243,Engineering,Frontend Developer,3,Assessment,Maya Patel,2026-07-02,Active
+HF-CAND-035,Rahul Chawla,rahul.chawla@example.com,+91 98765 43244,Sales,Sales Executive,4,HR,Priya Nair,2026-07-02,Active
+HF-CAND-036,Deepika Arora,deepika.arora@example.com,+91 98765 43245,Marketing,Product Marketing Manager,6,Offer,Noah Bennett,2026-07-03,Active
+HF-CAND-037,Siddharth Rao,siddharth.rao@example.com,+91 98765 43246,Engineering,DevOps Engineer,7,Accepted,Aisha Sharma,2026-07-03,Hired
+HF-CAND-038,Nandhini Kumar,nandhini.kumar@example.com,+91 98765 43247,Finance,Financial Analyst,2,Applied,Daniel Lewis,2026-07-04,Active
+HF-CAND-039,Gokul Raj,gokul.raj@example.com,+91 98765 43248,Engineering,QA Engineer,4,Screening,Maya Patel,2026-07-04,Active
+HF-CAND-040,Harini Venkatesh,harini.venkatesh@example.com,+91 98765 43249,HR,HR Executive,3,Technical,Priya Nair,2026-07-05,Active
+HF-CAND-041,Vivek Subramanian,vivek.subramanian@example.com,+91 98765 43250,Engineering,Data Engineer,6,Offer,Aisha Sharma,2026-07-05,Active
+HF-CAND-042,Aparna Nambiar,aparna.nambiar@example.com,+91 98765 43251,Marketing,SEO Specialist,5,Assessment,Noah Bennett,2026-07-06,Active
+HF-CAND-043,Kishore Balan,kishore.balan@example.com,+91 98765 43252,Engineering,Cloud Engineer,8,Joined,Daniel Lewis,2026-07-06,Hired
+HF-CAND-044,Roshini Prasad,roshini.prasad@example.com,+91 98765 43253,Finance,Accounts Executive,4,HR,Priya Nair,2026-07-07,Rejected
+HF-CAND-045,Abhishek Mishra,abhishek.mishra@example.com,+91 98765 43254,Engineering,Full Stack Developer,5,Technical,Maya Patel,2026-07-07,Active
+HF-CAND-046,Sahana Iyer,sahana.iyer@example.com,+91 98765 43255,HR,Talent Acquisition Specialist,6,Offer,Aisha Sharma,2026-07-08,Active
+HF-CAND-047,Ritesh Sinha,ritesh.sinha@example.com,+91 98765 43256,Sales,Business Development Executive,5,Assessment,Daniel Lewis,2026-07-08,On Hold
+HF-CAND-048,Keerthi Mohan,keerthi.mohan@example.com,+91 98765 43257,Engineering,Mobile Developer,2,Applied,Maya Patel,2026-07-09,Active
+HF-CAND-049,Ajay Narayan,ajay.narayan@example.com,+91 98765 43258,Engineering,QA Automation Engineer,7,Accepted,Noah Bennett,2026-07-09,Hired
+HF-CAND-050,Swetha Ram,swetha.ram@example.com,+91 98765 43259,Marketing,UX Researcher,4,Technical,Priya Nair,2026-07-10,Active
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2

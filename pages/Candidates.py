@@ -61,6 +61,16 @@ SKILL_LIBRARY = {
     "Data Analyst": ["SQL", "Python", "Dashboards", "Statistics"],
     "UI Designer": ["Figma", "Design Systems", "Prototyping", "Research"],
 }
+<<<<<<< HEAD
+=======
+from components.tables import candidate_table
+from HireFlow.backend.utils.candidates import (
+    filter_candidates,
+    load_candidates,
+    save_candidate,
+    search_candidates,
+)
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
 
 
 def _apply_page_style() -> None:
@@ -774,6 +784,13 @@ def _render_candidate_details(candidate: pd.Series) -> None:
 
 def render_page() -> None:
     """Render the complete Candidate Management module."""
+<<<<<<< HEAD
+=======
+    st.set_page_config(
+        page_title="Candidates | HireFlow Analytics",
+        layout="wide",
+    )
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
     _apply_page_style()
     _render_header()
 
@@ -820,9 +837,13 @@ def render_page() -> None:
         _render_candidate_details(selected_candidate)
 
 
+<<<<<<< HEAD
 if __name__ == "__main__":
     st.set_page_config(
         page_title="Candidates | HireFlow Analytics",
         layout="wide",
     )
     render_page()
+=======
+render_page()
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2

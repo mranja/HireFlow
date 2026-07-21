@@ -10,6 +10,10 @@ __pycache__/
 
 # Database
 *.db
+<<<<<<< HEAD
+=======
+backend/database/*.db
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2
 
 # VS Code
 .vscode/
@@ -18,4 +22,11 @@ __pycache__/
 .DS_Store
 
 # Logs
+<<<<<<< HEAD
 *.log
+=======
+*.log
+
+#test
+.pytest_cache
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2

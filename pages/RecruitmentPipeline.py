@@ -16,9 +16,13 @@ def main() -> None:
 
 
 if __name__ == "__main__":
+<<<<<<< HEAD
     st.set_page_config(
         page_title="Recruitment Pipeline | HireFlow Analytics",
         layout="wide",
     )
     main()
     
+=======
+    main()
+>>>>>>> 7f1d561fe854ff79ec4ca6fdf2bd11bb2e359dc2

@@ -79,6 +79,7 @@ def _render_header() -> None:
 def render_page() -> None:
     _apply_page_style()
     _render_header()
+    st.caption("Reporting views are prepared for future export logic and live business data.")
 
     st.info("No report data available. Report generation will appear after backend integration.")
 

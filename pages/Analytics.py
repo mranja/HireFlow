@@ -2,9 +2,24 @@
 
 from __future__ import annotations
 
+from typing import Any, Sequence
+
+import plotly.graph_objects as go
 import streamlit as st
 
+from components.charts import render_bar_chart
 from components.metrics import render_kpi_grid
+
+DEFAULT_RECRUITMENT_STAGES: tuple[str, ...] = (
+    "Applied",
+    "Screening",
+    "Assessment",
+    "Technical Interview",
+    "HR Interview",
+    "Offer",
+    "Accepted",
+    "Joined",
+)
 
 
 def _apply_page_style() -> None:
@@ -67,6 +82,39 @@ def _apply_page_style() -> None:
             font-size: 0.78rem;
             font-weight: 600;
         }
+        .hf-stage-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 0.55rem;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.03);
+        }
+        .hf-stage-name {
+            color: #101828;
+            font-size: 0.95rem;
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .hf-stage-meta {
+            color: #475467;
+            font-size: 0.87rem;
+            line-height: 1.45;
+        }
+        .hf-stage-connector {
+            text-align: center;
+            color: #2563eb;
+            font-size: 1.2rem;
+            margin: 0.1rem 0 0.45rem;
+        }
+        .hf-empty-state {
+            background: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 14px;
+            padding: 1rem 1.1rem;
+            color: #475467;
+            line-height: 1.6;
+        }
         </style>
         """,
         unsafe_allow_html=True,
@@ -79,87 +127,304 @@ def _render_header() -> None:
     st.markdown(
         (
             '<div class="hf-page-subtitle">'
-            'A placeholder analytics workspace for recruitment performance views and downstream reporting.'
+            'A production-ready recruitment analytics workspace for funnel health, conversion tracking, and reporting.'
             '</div>'
         ),
         unsafe_allow_html=True,
     )
-    st.caption("Analytics panels are prepared for future backend integration and live reporting data.")
+    st.caption("The recruitment funnel and analytics panels are prepared for future backend integration.")
 
 
-def _render_overview_kpis() -> None:
-    kpi_items = [
+def _build_placeholder_kpis() -> list[dict[str, Any]]:
+    return [
         {
-            "title": "Conversion Rate",
-            "value": "0%",
-            "icon": "📈",
-            "subtitle": "Placeholder for applicant-to-offer performance.",
+            "title": "Total Applicants",
+            "value": "—",
+            "icon": "👥",
+            "subtitle": "Placeholder for applicant volume.",
             "trend_placeholder": "Awaiting data",
             "status_color": "#2563eb",
         },
         {
-            "title": "Average Time to Hire",
-            "value": "0 days",
-            "icon": "⏱️",
-            "subtitle": "Placeholder for hiring efficiency.",
+            "title": "Overall Conversion Rate",
+            "value": "—",
+            "icon": "📈",
+            "subtitle": "Placeholder for applicant-to-offer performance.",
             "trend_placeholder": "Awaiting data",
             "status_color": "#7c3aed",
         },
         {
-            "title": "Offer Acceptance",
-            "value": "0%",
+            "title": "Total Drop-offs",
+            "value": "—",
+            "icon": "📉",
+            "subtitle": "Placeholder for funnel loss tracking.",
+            "trend_placeholder": "Awaiting data",
+            "status_color": "#f59e0b",
+        },
+        {
+            "title": "Final Hires",
+            "value": "—",
             "icon": "✅",
-            "subtitle": "Placeholder for offer success metrics.",
+            "subtitle": "Placeholder for accepted and joined hires.",
             "trend_placeholder": "Awaiting data",
             "status_color": "#16a34a",
         },
+        {
+            "title": "Hiring Efficiency",
+            "value": "—",
+            "icon": "⚡",
+            "subtitle": "Placeholder for hiring throughput.",
+            "trend_placeholder": "Awaiting data",
+            "status_color": "#0f766e",
+        },
     ]
-    render_kpi_grid(kpi_items, columns=3)
 
 
-def _render_placeholder_panels() -> None:
+def _render_overview_kpis() -> None:
+    render_kpi_grid(_build_placeholder_kpis(), columns=5)
+
+
+def _get_recruitment_funnel_data() -> Sequence[dict[str, Any]] | None:
+    """Return recruitment funnel data when the backend is connected.
+
+    The UI is intentionally designed to accept stage dictionaries with values
+    such as stage_name, candidate_count, conversion_rate, and drop_off_rate.
+    """
+    return None
+
+
+def _normalize_funnel_data(data: Sequence[dict[str, Any]] | None) -> list[dict[str, Any]]:
+    if not data:
+        return []
+
+    normalized: list[dict[str, Any]] = []
+    for stage_name in DEFAULT_RECRUITMENT_STAGES:
+        match = None
+        for item in data:
+            candidate_name = str(
+                item.get("stage_name") or item.get("stage") or item.get("name") or ""
+            ).strip()
+            if candidate_name.lower() == stage_name.lower():
+                match = item
+                break
+
+        if match is None:
+            continue
+
+        candidate_count_raw = match.get("candidate_count") or match.get("count") or match.get("value")
+        candidate_count = None
+        if candidate_count_raw is not None:
+            try:
+                candidate_count = int(float(candidate_count_raw))
+            except (TypeError, ValueError):
+                candidate_count = None
+
+        conversion_rate_raw = match.get("conversion_rate")
+        conversion_rate = None
+        if conversion_rate_raw is not None:
+            try:
+                conversion_rate = round(float(conversion_rate_raw), 1)
+            except (TypeError, ValueError):
+                conversion_rate = None
+
+        drop_off_rate_raw = match.get("drop_off_rate")
+        drop_off_rate = None
+        if drop_off_rate_raw is not None:
+            try:
+                drop_off_rate = round(float(drop_off_rate_raw), 1)
+            except (TypeError, ValueError):
+                drop_off_rate = None
+
+        normalized.append(
+            {
+                "stage_name": stage_name,
+                "candidate_count": candidate_count,
+                "conversion_rate": conversion_rate,
+                "drop_off_rate": drop_off_rate,
+            }
+        )
+
+    return normalized
+
+
+def _build_funnel_metrics(stages: Sequence[dict[str, Any]]) -> list[dict[str, Any]]:
+    if not stages:
+        return []
+
+    prepared_stages: list[dict[str, Any]] = []
+    initial_count = None
+    for stage in stages:
+        candidate_count = stage.get("candidate_count")
+        if candidate_count is not None and candidate_count >= 0:
+            initial_count = candidate_count if initial_count is None else initial_count
+        prepared_stages.append(dict(stage))
+
+    if initial_count is None or initial_count <= 0:
+        return prepared_stages
+
+    for index, stage in enumerate(prepared_stages):
+        candidate_count = stage.get("candidate_count")
+        if candidate_count is None:
+            stage["conversion_rate"] = None
+            stage["drop_off_rate"] = None
+            continue
+
+        if index == 0:
+            stage["conversion_rate"] = 100.0
+        else:
+            stage["conversion_rate"] = round((candidate_count / initial_count) * 100, 1)
+
+        if index == 0:
+            stage["drop_off_rate"] = None
+        else:
+            previous_count = prepared_stages[index - 1].get("candidate_count")
+            if previous_count is None or previous_count <= 0:
+                stage["drop_off_rate"] = None
+            else:
+                stage["drop_off_rate"] = round(((previous_count - candidate_count) / previous_count) * 100, 1)
+
+    return prepared_stages
+
+
+def _render_funnel_chart(stages: Sequence[dict[str, Any]]) -> None:
+    counts = [stage.get("candidate_count") or 0 for stage in stages]
+    labels = [stage.get("stage_name") or "Stage" for stage in stages]
+
+    figure = go.Figure(
+        go.Funnel(
+            y=labels,
+            x=counts,
+            text=[f"{stage.get('candidate_count') if stage.get('candidate_count') is not None else '—'}" for stage in stages],
+            textposition="inside",
+            connector={"line": {"color": "#94a3b8", "width": 2}},
+            marker={
+                "color": ["#2563eb", "#4f46e5", "#7c3aed", "#0f766e", "#0891b2", "#f59e0b", "#16a34a", "#ef4444"],
+                "line": {"color": "rgba(15, 23, 42, 0.08)", "width": 1},
+            },
+            hovertemplate="<b>%{y}</b><br>Candidate count: %{x}<extra></extra>",
+        )
+    )
+
+    figure.update_layout(
+        template="plotly_white",
+        margin=dict(l=24, r=24, t=30, b=20),
+        paper_bgcolor="white",
+        plot_bgcolor="white",
+        height=420,
+        font=dict(family="Inter, Arial, sans-serif", size=13, color="#334155"),
+    )
+
+    st.plotly_chart(figure, use_container_width=True, height=420)
+
+
+def _render_stage_breakdown(stages: Sequence[dict[str, Any]]) -> None:
+    for index, stage in enumerate(stages):
+        with st.container():
+            st.markdown(
+                (
+                    '<div class="hf-stage-card">'
+                    f'<div class="hf-stage-name">{stage.get("stage_name")}</div>'
+                    f'<div class="hf-stage-meta">Candidate count: <strong>{stage.get("candidate_count") if stage.get("candidate_count") is not None else "—"}</strong></div>'
+                    f'<div class="hf-stage-meta">Conversion rate: <strong>{stage.get("conversion_rate") if stage.get("conversion_rate") is not None else "—"}%</strong></div>'
+                    f'<div class="hf-stage-meta">Drop-off: <strong>{stage.get("drop_off_rate") if stage.get("drop_off_rate") is not None else "—"}%</strong></div>'
+                    '</div>'
+                ),
+                unsafe_allow_html=True,
+            )
+
+        if index < len(stages) - 1:
+            st.markdown('<div class="hf-stage-connector">↓</div>', unsafe_allow_html=True)
+
+
+def _render_funnel_section() -> None:
     st.divider()
-    st.markdown('<div class="hf-section-title">Analytics Panels</div>', unsafe_allow_html=True)
+    st.markdown('<div class="hf-section-title">Recruitment Funnel</div>', unsafe_allow_html=True)
+
+    funnel_data = _build_funnel_metrics(_normalize_funnel_data(_get_recruitment_funnel_data()))
+
+    if not funnel_data:
+        st.markdown(
+            '<div class="hf-empty-state">No recruitment analytics available.<br/>Waiting for backend integration.</div>',
+            unsafe_allow_html=True,
+        )
+        return
 
     with st.container():
-        left, right = st.columns(2, gap="large")
-        with left:
-            st.markdown(
-                '<div class="hf-chart-card">'
-                '<div class="hf-chart-title">Funnel Analytics</div>'
-                '<div class="hf-chart-text">This visualization will populate once recruitment pipeline data is connected.</div>'
-                '<div class="hf-pill">Waiting for data</div>'
-                '</div>',
-                unsafe_allow_html=True,
-            )
-        with right:
-            st.markdown(
-                '<div class="hf-chart-card">'
-                '<div class="hf-chart-title">Department Performance</div>'
-                '<div class="hf-chart-text">Department analytics will display here after backend data is available.</div>'
-                '<div class="hf-pill">Waiting for data</div>'
-                '</div>',
-                unsafe_allow_html=True,
-            )
+        funnel_column, breakdown_column = st.columns([0.64, 0.36], gap="large")
+        with funnel_column:
+            _render_funnel_chart(funnel_data)
+        with breakdown_column:
+            _render_stage_breakdown(funnel_data)
 
-    st.write("")
-    st.markdown(
-        '<div class="hf-chart-card">'
-        '<div class="hf-chart-title">Hiring Trends</div>'
-        '<div class="hf-chart-text">Trend charts and heatmaps will render after the analytics backend is connected.</div>'
-        '<div class="hf-pill">Waiting for data</div>'
-        '</div>',
-        unsafe_allow_html=True,
-    )
+
+def _render_conversion_summary(stages: Sequence[dict[str, Any]]) -> None:
+    st.divider()
+    st.markdown('<div class="hf-section-title">Conversion Summary</div>', unsafe_allow_html=True)
+
+    if not stages:
+        st.info("Conversion summary will appear after backend integration.", icon="📊")
+        return
+
+    summary_data = [
+        {"stage": stage.get("stage_name", "Stage"), "count": stage.get("candidate_count") or 0}
+        for stage in stages
+    ]
+    render_bar_chart(summary_data, x_column="stage", y_column="count", title="Stage Volume Summary", height=300, color="#2563eb")
+
+
+def _render_drop_off_insights(stages: Sequence[dict[str, Any]]) -> None:
+    st.divider()
+    st.markdown('<div class="hf-section-title">Drop-off Insights</div>', unsafe_allow_html=True)
+
+    if not stages:
+        st.info("Drop-off insights will appear after backend integration.", icon="🧭")
+        return
+
+    insights_data = []
+    for index in range(1, len(stages)):
+        previous_stage = stages[index - 1]
+        current_stage = stages[index]
+        previous_count = previous_stage.get("candidate_count")
+        current_count = current_stage.get("candidate_count")
+        if previous_count is None or current_count is None or previous_count <= 0:
+            continue
+        drop_off = round(((previous_count - current_count) / previous_count) * 100, 1)
+        insights_data.append(
+            {
+                "stage": f"{previous_stage.get('stage_name')} → {current_stage.get('stage_name')}",
+                "drop_off": drop_off,
+            }
+        )
+
+    if not insights_data:
+        st.info("Drop-off insights will appear once candidate counts are available.", icon="🧭")
+        return
+
+    render_bar_chart(insights_data, x_column="stage", y_column="drop_off", title="Drop-off by Stage Pair", height=300, color="#f59e0b")
+
+
+def _render_recommendations_placeholder() -> None:
+    st.divider()
+    st.markdown('<div class="hf-section-title">Recommendations</div>', unsafe_allow_html=True)
+    with st.expander("Suggested next steps", expanded=False):
+        st.write(
+            "- Connect backend funnel data to populate stage counts and conversion percentages.\n"
+            "- Add department, recruiter, and date-range filters for segmentation.\n"
+            "- Extend the funnel with drill-down analytics for drop-off hotspots."
+        )
 
 
 def render_page() -> None:
-    """Render the analytics landing page with placeholder panels."""
+    """Render the analytics landing page with a recruitment funnel overview."""
     _apply_page_style()
     _render_header()
     st.divider()
     _render_overview_kpis()
-    _render_placeholder_panels()
+    funnel_data = _build_funnel_metrics(_normalize_funnel_data(_get_recruitment_funnel_data()))
+    _render_funnel_section()
+    _render_conversion_summary(funnel_data)
+    _render_drop_off_insights(funnel_data)
+    _render_recommendations_placeholder()
 
 
 if __name__ == "__main__":

@@ -1,0 +1,11 @@
+Candidate ID,Interview Round,Interviewer,Date,Technical,Communication,Problem Solving,Culture Fit,Overall,Recommendation,Feedback
+HF-CAND-001,HR,Alice,2026-07-20,7,9,8,9,8.3,Hire,Excellent communication and positive attitude.
+HF-CAND-002,Technical,Bob,2026-07-21,9,7,8,7,7.8,Hire,Strong backend and API skills.
+HF-CAND-003,Managerial,Carol,2026-07-22,8,8,9,8,8.2,Hold,Needs more leadership experience.
+HF-CAND-004,Technical,David,2026-07-23,6,7,6,7,6.5,Reject,Needs stronger DSA fundamentals.
+HF-CAND-005,HR,Emma,2026-07-24,8,9,8,9,8.5,Hire,Great culture fit.
+HF-CAND-006,Technical,Bob,2026-07-24,10,8,9,8,8.8,Hire,Excellent system design knowledge.
+HF-CAND-007,Final,Grace,2026-07-25,8,8,8,9,8.3,Hire,Consistent performance across rounds.
+HF-CAND-008,Technical,Henry,2026-07-25,5,6,5,7,5.8,Reject,Insufficient practical experience.
+HF-CAND-009,HR,Alice,2026-07-26,7,10,7,10,8.5,Hire,Outstanding communication.
+HF-CAND-010,Technical,Carol,2026-07-26,9,8,9,8,8.5,Hire,Strong coding and debugging.

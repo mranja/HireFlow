@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from typing import Any, Sequence
 
+import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
@@ -114,6 +115,34 @@ def _apply_page_style() -> None:
             padding: 1rem 1.1rem;
             color: #475467;
             line-height: 1.6;
+        }
+        .hf-analytics-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 1rem 1.1rem;
+            box-shadow: 0 10px 30px rgba(15, 23, 42, 0.04);
+        }
+        .hf-insight-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            padding: 0.9rem 1rem;
+            min-height: 108px;
+            box-shadow: 0 8px 22px rgba(15, 23, 42, 0.03);
+        }
+        .hf-insight-label {
+            color: #667085;
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            margin-bottom: 0.35rem;
+        }
+        .hf-insight-value {
+            color: #101828;
+            font-size: 1rem;
+            font-weight: 700;
         }
         </style>
         """,
@@ -357,6 +386,246 @@ def _render_funnel_section() -> None:
             _render_stage_breakdown(funnel_data)
 
 
+def _get_department_comparison_data() -> Sequence[dict[str, Any]] | None:
+    """Return department comparison data when the backend is connected."""
+    return None
+
+
+def _normalize_department_comparison_data(data: Sequence[dict[str, Any]] | None) -> pd.DataFrame | None:
+    """Normalize future department comparison payloads into a reusable DataFrame."""
+    if data is None:
+        return None
+
+    if isinstance(data, pd.DataFrame):
+        dataframe = data.copy()
+    elif isinstance(data, dict):
+        dataframe = pd.DataFrame([data])
+    elif isinstance(data, (list, tuple)):
+        if not data:
+            return pd.DataFrame()
+        if isinstance(data[0], dict):
+            dataframe = pd.DataFrame(data)
+        else:
+            return pd.DataFrame({"Department": list(data)})
+    else:
+        return None
+
+    column_aliases = {
+        "Department": ["department", "department_name", "dept", "team"],
+        "Total Applications": ["total_applications", "applications_received", "applications", "applications_count"],
+        "Candidates Shortlisted": ["candidates_shortlisted", "shortlisted", "shortlisted_candidates"],
+        "Interviews Conducted": ["interviews_conducted", "interviews", "interview_count"],
+        "Offers Released": ["offers_released", "offers", "offer_count"],
+        "Hires": ["hires", "total_hires", "joined"],
+        "Hiring Rate": ["hiring_rate", "hire_rate", "success_rate"],
+        "Average Time to Hire": ["average_time_to_hire", "time_to_hire", "avg_time_to_hire"],
+        "Status": ["status", "performance_status"],
+    }
+
+    normalized_columns = {column: column for column in dataframe.columns}
+    for target_column, aliases in column_aliases.items():
+        for alias in aliases:
+            if alias in dataframe.columns:
+                normalized_columns[alias] = target_column
+                break
+
+    dataframe = dataframe.rename(columns=normalized_columns)
+
+    expected_columns = [
+        "Department",
+        "Total Applications",
+        "Candidates Shortlisted",
+        "Interviews Conducted",
+        "Offers Released",
+        "Hires",
+        "Hiring Rate",
+        "Average Time to Hire",
+        "Status",
+    ]
+    for column_name in expected_columns:
+        if column_name not in dataframe.columns:
+            dataframe[column_name] = pd.NA
+
+    return dataframe
+
+
+def _render_department_comparison_filters() -> tuple[str, str, str]:
+    """Render placeholder filters for the department comparison section."""
+    st.markdown('<div class="hf-section-title">Filters</div>', unsafe_allow_html=True)
+    filter_columns = st.columns([1.2, 1.2, 1.1, 0.8], gap="medium")
+
+    with filter_columns[0]:
+        st.selectbox("Department Selector", options=["All Departments", "Engineering", "Marketing", "Sales", "Finance", "HR", "Operations"], index=0, key="department_comparison_department")
+    with filter_columns[1]:
+        st.date_input("Date Range", value=(None, None), key="department_comparison_date_range")
+    with filter_columns[2]:
+        st.selectbox(
+            "Hiring Metric",
+            options=["Total Hires", "Hiring Rate", "Interviews Conducted", "Applications Received"],
+            index=0,
+            key="department_comparison_metric",
+        )
+    with filter_columns[3]:
+        if st.button("Reset Filters", key="department_comparison_reset"):
+            st.caption("Filter reset placeholders are ready for future integration.")
+
+    st.caption("Filtering logic will be connected once the backend endpoint is available.")
+    return (
+        st.session_state.get("department_comparison_department", "All Departments") or "All Departments",
+        "",
+        st.session_state.get("department_comparison_metric", "Total Hires") or "Total Hires",
+    )
+
+
+def _render_department_comparison_table(dataframe: pd.DataFrame | None) -> None:
+    """Render the ranked department comparison table with an empty state."""
+    st.divider()
+    st.markdown('<div class="hf-section-title">Ranked Department Table</div>', unsafe_allow_html=True)
+
+    if dataframe is None or dataframe.empty:
+        st.markdown(
+            '<div class="hf-empty-state">No department analytics available.<br/>Waiting for backend integration.</div>',
+            unsafe_allow_html=True,
+        )
+        return
+
+    display_frame = dataframe.copy()
+    display_frame = display_frame.replace({pd.NA: None})
+    if "Rank" not in display_frame.columns:
+        display_frame.insert(0, "Rank", range(1, len(display_frame) + 1))
+
+    table_columns = [
+        "Rank",
+        "Department",
+        "Total Applications",
+        "Candidates Shortlisted",
+        "Interviews Conducted",
+        "Offers Released",
+        "Hires",
+        "Hiring Rate",
+        "Average Time to Hire",
+        "Status",
+    ]
+    display_frame = display_frame[[column for column in table_columns if column in display_frame.columns]]
+
+    st.dataframe(
+        display_frame,
+        hide_index=True,
+        width="stretch",
+        height=360,
+        use_container_width=True,
+        column_config={
+            "Rank": st.column_config.NumberColumn("Rank", format="%d"),
+            "Department": st.column_config.TextColumn("Department"),
+            "Total Applications": st.column_config.NumberColumn("Total Applications", format="%d"),
+            "Candidates Shortlisted": st.column_config.NumberColumn("Candidates Shortlisted", format="%d"),
+            "Interviews Conducted": st.column_config.NumberColumn("Interviews Conducted", format="%d"),
+            "Offers Released": st.column_config.NumberColumn("Offers Released", format="%d"),
+            "Hires": st.column_config.NumberColumn("Hires", format="%d"),
+            "Hiring Rate": st.column_config.NumberColumn("Hiring Rate", format="%.1f %%"),
+            "Average Time to Hire": st.column_config.TextColumn("Average Time to Hire"),
+            "Status": st.column_config.TextColumn("Status"),
+        },
+    )
+
+
+def _render_department_comparison_chart(dataframe: pd.DataFrame | None, metric_name: str) -> None:
+    """Render a reusable bar chart for department comparison metrics."""
+    st.divider()
+    st.markdown('<div class="hf-section-title">Department Comparison Bar Chart</div>', unsafe_allow_html=True)
+
+    if dataframe is None or dataframe.empty:
+        st.markdown(
+            '<div class="hf-empty-state">No department analytics available.<br/>Waiting for backend integration.</div>',
+            unsafe_allow_html=True,
+        )
+        return
+
+    metric_mapping = {
+        "Total Hires": "Hires",
+        "Hiring Rate": "Hiring Rate",
+        "Interviews Conducted": "Interviews Conducted",
+        "Applications Received": "Total Applications",
+    }
+    y_column = metric_mapping.get(metric_name, "Hires")
+    chart_frame = dataframe[["Department", y_column]].copy()
+    chart_frame = chart_frame.dropna(subset=[y_column])
+
+    if chart_frame.empty:
+        st.markdown(
+            '<div class="hf-empty-state">No department analytics available.<br/>Waiting for backend integration.</div>',
+            unsafe_allow_html=True,
+        )
+        return
+
+    render_bar_chart(
+        chart_frame,
+        x_column="Department",
+        y_column=y_column,
+        title=f"Department Comparison by {metric_name}",
+        height=360,
+        color="#2563eb",
+    )
+
+
+def _render_department_insights(dataframe: pd.DataFrame | None) -> None:
+    """Render performance-insight placeholders for the department comparison section."""
+    st.divider()
+    st.markdown('<div class="hf-section-title">Performance Insights</div>', unsafe_allow_html=True)
+
+    if dataframe is None or dataframe.empty:
+        st.markdown(
+            '<div class="hf-empty-state">Insights will be available after backend integration.</div>',
+            unsafe_allow_html=True,
+        )
+        return
+
+    insight_items = [
+        ("Top Performing Department", "Awaiting backend data"),
+        ("Lowest Performing Department", "Awaiting backend data"),
+        ("Highest Hiring Rate", "Awaiting backend data"),
+        ("Longest Hiring Time", "Awaiting backend data"),
+        ("Hiring Trend Summary", "Awaiting backend data"),
+    ]
+
+    insight_columns = st.columns(3, gap="medium")
+    for index, (label, value) in enumerate(insight_items):
+        with insight_columns[index % 3]:
+            st.markdown(
+                (
+                    '<div class="hf-insight-card">'
+                    f'<div class="hf-insight-label">{label}</div>'
+                    f'<div class="hf-insight-value">{value}</div>'
+                    '</div>'
+                ),
+                unsafe_allow_html=True,
+            )
+
+
+def _render_department_comparison_section() -> None:
+    """Render the department comparison frontend section with placeholders for future data."""
+    st.divider()
+    st.markdown('<div class="hf-page-title">Department Performance Comparison</div>', unsafe_allow_html=True)
+    st.markdown(
+        '<div class="hf-page-subtitle">Compare department-level hiring effectiveness, engagement, and conversion metrics in a polished executive-ready view.</div>',
+        unsafe_allow_html=True,
+    )
+
+    header_columns = st.columns([0.72, 0.28], gap="medium")
+    with header_columns[0]:
+        st.caption("Last updated: Pending backend sync")
+    with header_columns[1]:
+        st.button("Export", disabled=True, key="department_comparison_export")
+
+    department_data = _get_department_comparison_data()
+    comparison_frame = _normalize_department_comparison_data(department_data)
+
+    _render_department_comparison_filters()
+    _render_department_comparison_table(comparison_frame)
+    _render_department_comparison_chart(comparison_frame, st.session_state.get("department_comparison_metric", "Total Hires") or "Total Hires")
+    _render_department_insights(comparison_frame)
+
+
 def _render_conversion_summary(stages: Sequence[dict[str, Any]]) -> None:
     st.divider()
     st.markdown('<div class="hf-section-title">Conversion Summary</div>', unsafe_allow_html=True)
@@ -424,6 +693,7 @@ def render_page() -> None:
     _render_funnel_section()
     _render_conversion_summary(funnel_data)
     _render_drop_off_insights(funnel_data)
+    _render_department_comparison_section()
     _render_recommendations_placeholder()
 
 
